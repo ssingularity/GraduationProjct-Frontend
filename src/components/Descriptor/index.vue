@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tree ref="tree" :data="treeData" :expand-on-click-node="false" :highlight-current="true">
+    <el-tree ref="tree" :data="treeData" :expand-on-click-node="false" :highlight-current="false">
       <span slot-scope="{node, data}">
         <type :type="data.type"/>
         <span>{{data.keyName}}</span>

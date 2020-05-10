@@ -10,3 +10,10 @@ export function registerDataSource(data) {
     data
   })
 }
+
+export function getAllDataSource() {
+  return request({
+    url: '/datasource-service/datasource',
+    method: 'get'
+  })
+}
