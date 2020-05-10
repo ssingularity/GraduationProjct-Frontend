@@ -39,7 +39,7 @@ request.interceptors.response.use(
       Message({
         message: res.message || 'Error',
         type: 'error',
-        duration: 5 * 1000
+        duration: 2 * 1000
       });
 
       if (res.code === 401) {

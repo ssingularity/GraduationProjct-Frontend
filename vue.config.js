@@ -5,6 +5,7 @@ const resolve = dir => {
 };
 
 module.exports = {
+  productionSourceMap: true,
   devServer: {
     port: 8000,
     open: true,
