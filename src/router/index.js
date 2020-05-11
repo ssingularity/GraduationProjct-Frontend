@@ -8,14 +8,14 @@ Vue.use(VueRouter);
 export const constantRoutes = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/dashboard',
     component: Layout,
     children: [
       {
-        path: 'home',
+        path: 'dashboard',
         component: () => import('@/views/Home'),
-        name: 'home',
-        meta: { title: 'Home', icon: 'dashboard', affix: true }
+        name: 'dashboard',
+        meta: { title: '资源概览', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -46,6 +46,29 @@ export const constantRoutes = [
         name: 'datasourceSubscription',
         meta: { title: '数据源订阅'}
       },
+    ]
+  },
+  {
+    path: '/service',
+    component: Layout,
+    name: 'service',
+    meta: {
+      title: '服务管理',
+      icon: 'service'
+    },
+    children: [
+      {
+        path: 'create',
+        component: () => import('@/views/service/ServiceCreate'),
+        name: 'serviceCreate',
+        meta: { title: '服务创建'}
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/service/ServiceList'),
+        name: 'serviceList',
+        meta: { title: '服务列表'}
+      }
     ]
   },
   {
