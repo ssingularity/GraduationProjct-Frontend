@@ -28,7 +28,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="small">订阅</el-button>
+          <el-button type="success" size="small" :disabled="!canSubscribe(scope.row.owner)" @click="subscribe(scope.row)">订阅</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -37,11 +37,30 @@
 
 <script>
   import Descriptor from '@/components/Descriptor'
-  import {getAllDataSource} from "@/api/datasource";
+  import {getAllDataSource, subscribeDataSource} from "@/api/datasource";
+  import {Message} from "element-ui";
   export default {
     name: "DataSourceList",
     components: {
       Descriptor
+    },
+    methods: {
+      canSubscribe(owner) {
+        return this.$store.getters.name != owner;
+      },
+      subscribe(dataSource) {
+        subscribeDataSource(dataSource)
+          .then(response => {
+            Message({
+              message: "申请订阅成功，请等待审批",
+              type: 'success',
+              duration: 2 * 1000
+            });
+          })
+          .catch(error => {
+
+          })
+      }
     },
     data() {
       return {
