@@ -76,13 +76,12 @@
     computed: {
       treeData() {
         let res = [];
-        res.push(this.localSchema);
+        res.push(this.schema);
         return res
       }
     },
     data() {
       return {
-        localSchema: this.schema,
         cur_data: {},
         added_data: {},
         editor_visible: false,

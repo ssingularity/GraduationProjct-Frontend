@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 import Login from '@/views/login';
-import Layout from '@/layout'
+import Layout from '@/layout';
 
 Vue.use(VueRouter);
 
@@ -75,6 +75,29 @@ export const constantRoutes = [
         name: 'serviceDetail',
         hidden: true,
         meta: { title: '服务详情', activeMenu: '/service/list'}
+      }
+    ]
+  },
+  {
+    path: '/process',
+    component: Layout,
+    name: 'process',
+    meta: {
+      title: '流程管理',
+      icon: 'process'
+    },
+    children: [
+      {
+        path: 'create',
+        component: () => import('@/views/process/ProcessCreate'),
+        name: 'processCreate',
+        meta: { title: '流程创建'}
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/process/ProcessList'),
+        name: 'processList',
+        meta: { title: '流程列表'}
       }
     ]
   },
