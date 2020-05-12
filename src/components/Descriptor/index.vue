@@ -12,9 +12,7 @@
         </span>
       </span>
     </el-tree>
-    <el-dialog
-      title="增加节点"
-      :visible.sync="creator_visible">
+    <el-dialog title="增加节点" :visible.sync="creator_visible">
       <el-form :model="added_data" label-position="top">
         <el-form-item label="键名">
           <el-input v-model="added_data.keyName"></el-input>

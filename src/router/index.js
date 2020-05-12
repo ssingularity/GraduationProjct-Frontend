@@ -68,6 +68,13 @@ export const constantRoutes = [
         component: () => import('@/views/service/ServiceList'),
         name: 'serviceList',
         meta: { title: '服务列表'}
+      },
+      {
+        path: ':serviceId',
+        component: () => import('@/views/service/ServiceDetail'),
+        name: 'serviceDetail',
+        hidden: true,
+        meta: { title: '服务详情', activeMenu: '/service/list'}
       }
     ]
   },
