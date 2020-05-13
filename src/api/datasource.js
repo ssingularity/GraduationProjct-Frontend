@@ -29,6 +29,24 @@ export function getMyDataSource() {
   })
 }
 
+export function getMyAuthorizedDataSource() {
+  let username = store.getters.name;
+  return request({
+    url: `/user-service/user/${username}/datasource`,
+    method: 'get'
+  }).then(response => {
+      return Promise.resolve(getDataSourceBatch(response.data))
+    })
+}
+
+export function getDataSourceBatch(data) {
+  return request({
+    url: '/datasource-service/datasource/batch',
+    method: 'post',
+    data
+  })
+}
+
 export function subscribeDataSource(dataSource) {
   let body = {
     username: store.getters.name,
