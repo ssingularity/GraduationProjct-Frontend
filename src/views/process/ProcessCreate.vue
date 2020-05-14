@@ -115,6 +115,32 @@
     components: {
       EditableFusionRule
     },
+    created() {
+      getMyDataSource()
+        .then(response => {
+          this.datasource.ownList = response.data;
+          this.datasource.ownList.forEach(ds => {
+            this.name2Id[ds.name] = ds.id;
+            this.name2Instance[ds.name] = ds;
+          })
+        });
+      getMyAuthorizedDataSource()
+        .then(response => {
+          this.datasource.authorizedList = response.data;
+          this.datasource.authorizedList.forEach(ds => {
+            this.name2Id[ds.name] = ds.id;
+            this.name2Instance[ds.name] = ds;
+          });
+        });
+      getServiceList()
+        .then(response => {
+          this.service.list = response.data;
+          this.service.list.forEach(svc => {
+            this.name2Id[svc.name] = svc.id;
+            this.name2Instance[svc.name] = svc;
+          });
+        });
+    },
     mounted() {
       this.initEcharts();
     },
@@ -122,14 +148,12 @@
       return {
         datasource: {
           drawer: false,
-          drawerLoading: false,
           activeNames: [],
           ownList: [],
           authorizedList: []
         },
         service: {
           drawer: false,
-          drawerLoading: false,
           activeNames: [],
           list: [{name: 'test'}],
           dialogVisible: false,
@@ -173,7 +197,7 @@
         this.myChart.setOption(this.option);
         this.myChart.on('click', (params) => {
           if (params.dataType === 'node' && params.data.category === 'service') {
-            //TODO 融合规则以及转换规则以及背压阈值
+            //TODO 转换规则
             this.svcEdit.svc = this.name2Instance[params.data.name];
             if (this.svcEdit.svc.inputList.length > 1) {
               this.active = 0;
@@ -187,47 +211,9 @@
       },
       openDataSourceDrawer() {
         this.datasource.drawer = true;
-        this.datasource.drawerLoading = true;
-        getMyDataSource()
-          .then(response => {
-            this.datasource.ownList = response.data;
-            this.datasource.drawerLoading = false;
-            this.datasource.ownList.forEach(ds => {
-              this.name2Id[ds.name] = ds.id;
-              this.name2Instance[ds.name] = ds;
-            })
-          })
-          .catch((error) => {
-            this.datasource.drawerLoading = false;
-          });
-        getMyAuthorizedDataSource()
-          .then(response => {
-            this.datasource.authorizedList = response.data;
-            this.datasource.authorizedList.forEach(ds => {
-              this.name2Id[ds.name] = ds.id;
-              this.name2Instance[ds.name] = ds;
-            });
-            this.datasource.drawerLoading = false;
-          })
-          .catch((error) => {
-            this.datasource.drawerLoading = false;
-          });
       },
       openServiceDrawer() {
         this.service.drawer = true;
-        this.service.drawerLoading = true;
-        getServiceList()
-          .then(response => {
-            this.service.list = response.data;
-            this.service.list.forEach(svc => {
-              this.name2Id[svc.name] = svc.id;
-              this.name2Instance[svc.name] = svc;
-            });
-            this.service.drawerLoading = false;
-          })
-          .catch((error) => {
-            this.service.drawerLoading = false;
-          })
       },
       selectDataSource(ds) {
         this.datasource.drawer = false;
@@ -291,6 +277,7 @@
       createProcess() {
         this.$refs["process-form"].validate((valid) => {
           if (valid) {
+            console.log(this.process);
             createProcess(this.process)
               .then(response => {
                 this.loading = false;

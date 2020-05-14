@@ -77,9 +77,9 @@
         else {
           this.svc.fusionRule = {
             keyName: getCommonKey(this.svc.inputList.map(x => x.schema)),
-            dataSourceIdList: this.svc.inputList.map(x => x.id)
+            dataSourceIdSet: this.svc.inputList.map(x => x.id)
           };
-          this.schema = fusion(this.svc.inputList.map(x => x.schema))
+          this.schema = fusion(this.svc.inputList.map(x => x.schema));
           console.log(this.schema);
         }
       }
