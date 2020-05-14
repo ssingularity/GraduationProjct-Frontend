@@ -79,6 +79,20 @@
         <el-button type="primary" @click="doSelectService">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :visible.sync="fusionRule.dialogVisible" width="90%" top="2vh">
+      <el-steps :active="active" finish-status="success">
+        <el-step title="数据融合"></el-step>
+        <el-step title="数据转换"></el-step>
+        <el-step title="背压阈值设置"></el-step>
+      </el-steps>
+      <editable-fusion-rule v-if="active==0" :svc="fusionRule.svc"></editable-fusion-rule>
+      <span slot="footer">
+        <el-button style="margin-top: 12px;" @click="active--" :disabled="active==0">上一步</el-button>
+        <el-button style="margin-top: 12px;" @click="active++" :disabled="active==2">下一步</el-button>
+        <el-button style="margin-top: 12px;" type="primary" :disabled="active!=2">完成</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -89,9 +103,13 @@
   import {findInstanceByName} from "@/utils/array";
   import {createProcess} from "@/api/process";
   import {Message} from "element-ui";
+  import EditableFusionRule from "@/components/FusionRule/EditableFusionRule";
 
   export default {
     name: "ProcessCreate",
+    components: {
+      EditableFusionRule
+    },
     mounted() {
       this.initEcharts();
     },
@@ -118,6 +136,12 @@
           description: '',
           topology: {}
         },
+        fusionRule: {
+          dialogVisible: false,
+          svc: {
+            inputList: []
+          }
+        },
         myChart: null,
         loading: false,
         selectedList: [],
@@ -126,12 +150,14 @@
         linkList: [],
         name2Id: {},
         name2Instance: {},
+        option: {},
+        transformRuleList: [],
+        active: 0,
         rules: {
           name: [
             {required: true, message: '请输入流程名称', trigger: 'blur'},
           ]
-        },
-        option: {}
+        }
       }
     },
     methods: {
@@ -142,6 +168,14 @@
         this.myChart.on('click', (params) => {
           if (params.dataType === 'node' && params.data.category === 'service') {
             //TODO 融合规则以及转换规则以及背压阈值
+            this.fusionRule.svc = this.name2Instance[params.data.name];
+            if (this.fusionRule.svc.inputList.length > 1) {
+              this.active = 0;
+            }
+            else {
+              this.active = 1;
+            }
+            this.fusionRule.dialogVisible = true;
           }
         });
       },
@@ -154,6 +188,7 @@
             this.datasource.drawerLoading = false;
             this.datasource.ownList.forEach(ds => {
               this.name2Id[ds.name] = ds.id;
+              this.name2Instance[ds.name] = ds;
             })
           })
           .catch((error) => {
@@ -164,6 +199,7 @@
             this.datasource.authorizedList = response.data;
             this.datasource.authorizedList.forEach(ds => {
               this.name2Id[ds.name] = ds.id;
+              this.name2Instance[ds.name] = ds;
             });
             this.datasource.drawerLoading = false;
           })
@@ -179,6 +215,7 @@
             this.service.list = response.data;
             this.service.list.forEach(svc => {
               this.name2Id[svc.name] = svc.id;
+              this.name2Instance[svc.name] = svc;
             });
             this.service.drawerLoading = false;
           })
@@ -236,6 +273,7 @@
         this.service.dialogVisible = false;
       },
       clearAll() {
+        this.process.topology = {};
         this.selectedList = [];
         this.linkList = [];
         this.dataSourceIndex = [0.5, 0.5];
