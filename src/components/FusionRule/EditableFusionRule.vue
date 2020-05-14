@@ -46,6 +46,14 @@
     components: {
       Descriptor
     },
+    mounted() {
+      if (this.svc.fusionRule != null) {
+        this.fusionRule = 'key'
+      }
+      else {
+        this.fusionRule = 'empty'
+      }
+    },
     data() {
       return {
         fusionRule: undefined,

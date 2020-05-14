@@ -80,17 +80,22 @@
       </span>
     </el-dialog>
 
-    <el-dialog :visible.sync="fusionRule.dialogVisible" width="90%" top="2vh">
+    <el-dialog :visible.sync="svcEdit.dialogVisible" width="90%" top="2vh">
       <el-steps :active="active" finish-status="success">
         <el-step title="数据融合"></el-step>
         <el-step title="数据转换"></el-step>
         <el-step title="背压阈值设置"></el-step>
       </el-steps>
-      <editable-fusion-rule v-if="active==0" :svc="fusionRule.svc"></editable-fusion-rule>
+      <editable-fusion-rule v-if="active==0" :svc="svcEdit.svc"></editable-fusion-rule>
+      <el-form v-if="active==2" style="margin-top: 50px">
+        <el-form-item style="text-align: center">
+          <el-input-number v-model="svcEdit.svc.threshold"></el-input-number>
+        </el-form-item>
+      </el-form>
       <span slot="footer">
         <el-button style="margin-top: 12px;" @click="active--" :disabled="active==0">上一步</el-button>
         <el-button style="margin-top: 12px;" @click="active++" :disabled="active==2">下一步</el-button>
-        <el-button style="margin-top: 12px;" type="primary" :disabled="active!=2">完成</el-button>
+        <el-button style="margin-top: 12px;" type="primary" :disabled="active!=2" @click="svcEdit.dialogVisible=false">完成</el-button>
       </span>
     </el-dialog>
   </el-card>
@@ -136,10 +141,11 @@
           description: '',
           topology: {}
         },
-        fusionRule: {
+        svcEdit: {
           dialogVisible: false,
           svc: {
-            inputList: []
+            inputList: [],
+            threshold: 5000
           }
         },
         myChart: null,
@@ -168,14 +174,14 @@
         this.myChart.on('click', (params) => {
           if (params.dataType === 'node' && params.data.category === 'service') {
             //TODO 融合规则以及转换规则以及背压阈值
-            this.fusionRule.svc = this.name2Instance[params.data.name];
-            if (this.fusionRule.svc.inputList.length > 1) {
+            this.svcEdit.svc = this.name2Instance[params.data.name];
+            if (this.svcEdit.svc.inputList.length > 1) {
               this.active = 0;
             }
             else {
               this.active = 1;
             }
-            this.fusionRule.dialogVisible = true;
+            this.svcEdit.dialogVisible = true;
           }
         });
       },
