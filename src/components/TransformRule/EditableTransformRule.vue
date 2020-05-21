@@ -50,14 +50,15 @@
 
 <script>
   import Descriptor from '@/components/Descriptor'
-  import {fusion, getKeys} from "@/utils/descriptor";
+  import {fusionInputList, getCommonKeyFromInputList, getKeys} from "@/utils/descriptor";
   import TransformRuleList from "@/components/TransformRule/TransformRuleList";
+  import {Message} from "element-ui";
 
   export default {
     name: "EditableTransformRule",
     computed: {
       inputSchema() {
-        return this.getInputChannel();
+        return this.getInputSchema();
       },
       keys() {
         return getKeys(this.inputSchema);
@@ -107,9 +108,19 @@
           target: undefined
         }
       },
-      getInputChannel() {
+      getInputSchema() {
         if (this.svc.inputList.length > 1) {
-          return fusion(this.svc.inputList.map(x => x.schema));
+          if (getCommonKeyFromInputList(this.svc.inputList) != null) {
+            return fusionInputList(this.svc.inputList);
+          }
+          else {
+            Message({
+              message: "输入格式错误",
+              type: "error",
+              duration: 2 * 1000
+            });
+            return null;
+          }
         } else {
           let input = this.svc.inputList[0];
           if (input.type === 'Service') {

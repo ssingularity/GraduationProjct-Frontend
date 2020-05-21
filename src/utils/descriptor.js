@@ -1,23 +1,29 @@
-import de from "element-ui/src/locale/lang/de";
-
-export function getCommonKey(list) {
-  if (list.length == 1) {
+function getCommonKey(descriptorList) {
+  if (descriptorList.length == 1) {
     return null;
   } else {
     let res = null;
     let counter = {};
-    list.forEach(x => {
-      x.children.forEach(y => {
-        if (counter[y.keyName] === undefined) {
-          counter[y.keyName] = 1;
+    descriptorList.forEach(x => {
+      if (x.type === 'Object') {
+        x.children.forEach(y => {
+          if (counter[y.keyName] === undefined) {
+            counter[y.keyName] = 1;
+          } else {
+            counter[y.keyName] += 1;
+          }
+        })
+      }
+      else {
+        if (counter[x.keyName] === undefined) {
+          counter[x.keyName] = 1;
         } else {
-          counter[y.keyName] += 1;
+          counter[x.keyName] += 1;
         }
-      })
+    }
     });
-    console.log(counter);
     for (let key in counter) {
-      if (counter[key] === list.length) {
+      if (counter[key] === descriptorList.length) {
         return key;
       }
     }
@@ -25,14 +31,14 @@ export function getCommonKey(list) {
   }
 }
 
-export function fusion(list) {
+function fusion(descriptorList) {
   let isInclude = false;
-  let keyName = getCommonKey(list);
+  let keyName = getCommonKey(descriptorList);
   let res = {
     children: [],
     type: 'Object'
   };
-  list.flatMap(x => x.children)
+  descriptorList.flatMap(x => x.type === "Object" ? x.children : [x])
     .forEach(x => {
       if (x.keyName === keyName) {
         if (!isInclude) {
@@ -46,6 +52,14 @@ export function fusion(list) {
   return res;
 }
 
+export function getCommonKeyFromInputList(list) {
+  return getCommonKey(list.map(x => x.type === 'DataSource' ? x.schema : x.response));
+}
+
+export function fusionInputList(list) {
+  return fusion(list.map(x => x.type === 'DataSource' ? x.schema : x.response))
+}
+
 export function getKeys(descriptor) {
   if (descriptor.type !== 'Object') {
     return [descriptor.keyName];
@@ -54,9 +68,4 @@ export function getKeys(descriptor) {
   } else {
     return descriptor.children.flatMap(x => getKeys(x)).map(x => descriptor.keyName + '.' + x);
   }
-}
-
-export function deepCopy(descriptor) {
-  let tmp = JSON.stringify(descriptor);
-  return descriptor;
 }
