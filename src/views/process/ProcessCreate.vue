@@ -111,6 +111,7 @@
   import {Message} from "element-ui";
   import EditableFusionRule from "@/components/FusionRule/EditableFusionRule";
   import EditableTransformRule from "@/components/TransformRule/EditableTransformRule";
+  import {deepCopy} from "@/utils/json";
 
   export default {
     name: "ProcessCreate",
@@ -199,7 +200,7 @@
     },
     methods: {
       initEcharts() {
-        this.option = option;
+        this.option = deepCopy(option);
         this.myChart = this.$echarts.init(this.$refs["echart"], 'vintage');
         this.myChart.setOption(this.option);
         this.myChart.on('click', (params) => {
@@ -229,7 +230,7 @@
         ds.value[1] = this.dataSourceIndex[1];
         this.dataSourceIndex[1] += 2;
         this.selectedList.push(ds);
-        option.series[0].data = this.selectedList;
+        this.option.series[0].data = this.selectedList;
         this.myChart.setOption(this.option);
       },
       selectService(svc) {
