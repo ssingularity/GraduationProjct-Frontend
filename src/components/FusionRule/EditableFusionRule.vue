@@ -48,7 +48,8 @@
     },
     mounted() {
       if (this.svc.fusionRule != null) {
-        this.fusionRule = 'key'
+        this.fusionRule = 'key';
+        this.schema = fusion(this.svc.inputList.map(x => x.schema));
       }
       else {
         this.fusionRule = 'empty'

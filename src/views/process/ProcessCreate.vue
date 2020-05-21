@@ -1,6 +1,6 @@
 <template>
-  <el-card shadow="hover" header="流程创建" class="card">
-    <el-form v-loading="loading" ref="process-form" :model="process" label-width="100px" :rules="rules">
+  <el-card v-loading="loading" shadow="hover" header="流程创建" class="card">
+    <el-form ref="process-form" :model="process" label-width="100px" :rules="rules">
       <el-form-item label="流程名称:" prop="name">
         <el-input v-model="process.name"/>
       </el-form-item>
@@ -87,6 +87,7 @@
         <el-step title="背压阈值设置"></el-step>
       </el-steps>
       <editable-fusion-rule v-if="active==0" :svc="svcEdit.svc"></editable-fusion-rule>
+      <editable-transform-rule v-if="active==1" :svc="svcEdit.svc"></editable-transform-rule>
       <el-form v-if="active==2" style="margin-top: 50px">
         <el-form-item style="text-align: center">
           <el-input-number v-model="svcEdit.svc.threshold"></el-input-number>
@@ -109,37 +110,43 @@
   import {createProcess} from "@/api/process";
   import {Message} from "element-ui";
   import EditableFusionRule from "@/components/FusionRule/EditableFusionRule";
+  import EditableTransformRule from "@/components/TransformRule/EditableTransformRule";
 
   export default {
     name: "ProcessCreate",
     components: {
-      EditableFusionRule
+      EditableFusionRule,
+      EditableTransformRule
     },
     created() {
-      getMyDataSource()
-        .then(response => {
-          this.datasource.ownList = response.data;
+      this.loading = true;
+      Promise.all([getMyDataSource(), getMyAuthorizedDataSource(), getServiceList()])
+        .then(array => {
+          this.datasource.ownList = array[0].data;
           this.datasource.ownList.forEach(ds => {
             this.name2Id[ds.name] = ds.id;
             this.name2Instance[ds.name] = ds;
-          })
-        });
-      getMyAuthorizedDataSource()
-        .then(response => {
-          this.datasource.authorizedList = response.data;
+          });
+
+          this.datasource.authorizedList = array[1].data;
           this.datasource.authorizedList.forEach(ds => {
             this.name2Id[ds.name] = ds.id;
             this.name2Instance[ds.name] = ds;
           });
-        });
-      getServiceList()
-        .then(response => {
-          this.service.list = response.data;
+
+          this.service.list = array[2].data;
           this.service.list.forEach(svc => {
             this.name2Id[svc.name] = svc.id;
             this.name2Instance[svc.name] = svc;
           });
-        });
+
+          this.loading = false;
+        })
+        .catch(
+          () => {
+            this.loading = false;
+          }
+        );
     },
     mounted() {
       this.initEcharts();
@@ -197,12 +204,10 @@
         this.myChart.setOption(this.option);
         this.myChart.on('click', (params) => {
           if (params.dataType === 'node' && params.data.category === 'service') {
-            //TODO 转换规则
             this.svcEdit.svc = this.name2Instance[params.data.name];
             if (this.svcEdit.svc.inputList.length > 1) {
               this.active = 0;
-            }
-            else {
+            } else {
               this.active = 1;
             }
             this.svcEdit.dialogVisible = true;

@@ -12,8 +12,7 @@
           <el-input type="textarea" v-model="datasource.description"/>
         </el-form-item>
         <el-form-item label="数据格式:" prop="schema">
-          <descriptor style="margin-top: 7px" :schema="{type: 'Object', children: []}" :editable="true"
-                      @change="change"/>
+          <descriptor style="margin-top: 7px" :schema="{type: 'Object', children: []}" :editable="true" @change="change"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit">立即创建</el-button>
@@ -26,7 +25,6 @@
 <script>
   import Descriptor from "@/components/Descriptor"
   import {Message} from "element-ui";
-  import schema from "@/mock/SchemaMock"
   import {registerDataSource} from "@/api/datasource";
 
   export default {
@@ -44,7 +42,6 @@
         }
       };
       return {
-        schema: schema,
         datasource: {
           name: '',
           topic: '',

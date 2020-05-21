@@ -98,6 +98,13 @@ export const constantRoutes = [
         component: () => import('@/views/process/ProcessList'),
         name: 'processList',
         meta: { title: '流程列表'}
+      },
+      {
+        path: ':processId',
+        component: () => import('@/views/process/ProcessDetail'),
+        name: 'processDetail',
+        hidden: true,
+        meta: { title: '流程详情', activeMenu: '/process/list'}
       }
     ]
   },

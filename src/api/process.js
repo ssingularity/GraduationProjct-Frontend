@@ -22,6 +22,13 @@ export function getMyProcess() {
   })
 }
 
+export function getProcess(id) {
+  return request({
+    url: `/process-service/process/${id}`,
+    method: 'get'
+  })
+}
+
 export function startProcess(id) {
   return request({
     url: `/process-service/process/${id}/start`,

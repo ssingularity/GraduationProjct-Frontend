@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tree ref="tree" :data="treeData" :expand-on-click-node="false" :highlight-current="false">
+    <el-tree :default-expand-all="true" ref="tree" :data="treeData" :expand-on-click-node="false" :highlight-current="false">
       <span slot-scope="{node, data}">
         <type :type="data.type"/>
         <span>{{data.keyName}}</span>
@@ -112,7 +112,7 @@
         this.cur_data.children.push(this.added_data);
         this.$set(this.cur_data, 'children', this.cur_data.children);
         this.added_data = {};
-        this.$emit('change', this.localSchema);
+        this.$emit('change', this.schema);
       },
 
       doEdit() {
@@ -120,7 +120,7 @@
         if (this.cur_data.type == "Object") {
           this.$set(this.cur_data, 'children', []);
         }
-        this.$emit('change', this.localSchema);
+        this.$emit('change', this.schema);
       },
 
       doCreatorClose() {
@@ -138,13 +138,8 @@
         const children = parent.data.children || parent.data;
         const index = children.findIndex(d => d.keyName === data.keyName);
         children.splice(index, 1);
-        this.$emit('change', this.localSchema);
+        this.$emit('change', this.schema);
       },
-
-      reload() {
-        this.visible = false;
-        this.visible = true;
-      }
     }
   }
 </script>

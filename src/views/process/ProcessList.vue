@@ -20,9 +20,9 @@
       <el-table-column label="操作" align="center" fixed="right" width="300px">
         <template slot-scope="scope">
           <el-button :disabled="scope.row.status === 'RUNNING'" size="small">修改</el-button>
-          <el-button :disabled="scope.row.status === 'STOPPED'" type="primary" size="small">详情</el-button>
-          <el-button :disabled="scope.row.status === 'RUNNING'" type="success" size="small"
-                     @click="start(scope.row.id)">启动
+          <el-button type="primary" size="small" @click="showDetail(scope.row.id)">详情</el-button>
+          <el-button :disabled="scope.row.status === 'RUNNING'" type="success" size="small" @click="start(scope.row.id)">
+            启动
           </el-button>
           <el-button :disabled="scope.row.status === 'STOPPED'" type="danger" size="small" @click="stop(scope.row.id)">
             停止
@@ -106,6 +106,9 @@
             });
             this.listLoading = false;
           })
+      },
+      showDetail(id) {
+        this.$router.push(`/process/${id}`);
       }
     }
   }
